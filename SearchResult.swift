@@ -11,7 +11,7 @@ class SearchResults{
     var artistName = ""
 }
 
-var searchResult: [SearchResults] = []
+var searchResults: [SearchResults] = []
 
 
 
