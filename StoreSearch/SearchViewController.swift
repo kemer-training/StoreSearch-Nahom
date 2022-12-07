@@ -19,7 +19,6 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    
     var hasSearched = false
 
     
@@ -27,7 +26,6 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         
         searchBar.becomeFirstResponder()
-        
         
         
         tableView.delegate = self
@@ -43,20 +41,91 @@ class SearchViewController: UIViewController {
 
 
     }
+    
+    func iTunesURL(searchText: String) -> URL {
+        let encodedText = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        let urlString = String(
+            format:"https://itunes.apple.com/search?term=%@",
+            encodedText
+        )
+        let url = URL(string: urlString)
+        
+        return url!
+    }
+    
+    func performStoreRequest(with url: URL) -> Data?{
+        do{
+            return try Data(contentsOf: url)
+        }
+        catch{
+            print("Request error - \(error)")
+        }
+        showNetworkError()
+        return nil
+    }
+    
+    func parse(data: Data) -> [SearchResult]{
+        do {
+            let decoder = JSONDecoder()
+            let result = try decoder.decode(ResultArray.self, from: data)
+            return result.results
+            
+        } catch {
+            print("JSON error - \(error)")
+            return []
+        }
+    }
+    
+    func showNetworkError(){
+        let alert = UIAlertController(
+            title: "Oops...",
+            message: "Couldn't access iTunes Store",
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: "Try Again",
+            style: .default
+        )
+        let action2 = UIAlertAction(
+            title: "Cancel",
+            style: .default
+        )
+        
+        alert.addAction(action)
+        alert.addAction(action2)
+        present(alert, animated: true)
+    }
+    
+    func sortSearchResults(){
+        searchResults.sort(by: <)
+    }
+    
+    
 }
 
 
 extension SearchViewController: UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
         hasSearched = true
-        if searchBar.text != "Ed Sheeran"{
-            for i in 1...4 {
-                let result = SearchResults()
-                result.name = "Result \(i)"
-                result.artistName = searchBar.text!
-                searchResults.append(result)
+        
+        if !searchBar.text!.isEmpty{
+            let url = iTunesURL(searchText: searchBar.text!)
+            let data = performStoreRequest(with: url)
+            
+            if let data = data{
+                print(parse(data: data))
+                searchResults = parse(data: data)
+                sortSearchResults()
+                
             }
+            else{
+                searchResults = []
+            }
+            
+        }
+        else{
+            searchResults = []
+            hasSearched = false
         }
         
         tableView.reloadData()
@@ -82,7 +151,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         var cell: SearchResultCell
-       
+        let searchResult = searchResults[indexPath.row]
+        
         if searchResults.count == 0{
             return tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.nothingFoundCell, for: indexPath)
             
@@ -90,8 +160,20 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
         else{
             cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell
             
-            cell.nameLabel.text = searchResults[indexPath.row].name
-            cell.artistNameLabel.text = searchResults[indexPath.row].artistName
+            
+            cell.nameLabel.text = searchResult.name
+            
+            if searchResult.artist.isEmpty{
+                cell.artistNameLabel.text = "Unknown"
+            }
+            else{
+                cell.artistNameLabel.text = String(
+                    format: "%@ (%@)",
+                    searchResult.artist,
+                    searchResult.type
+                )
+            }
+            
         }
         return cell
     }
@@ -104,6 +186,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
         if searchResults.isEmpty{
             return nil
         }
+    
         return indexPath
     }
     
