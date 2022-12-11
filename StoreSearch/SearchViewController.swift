@@ -67,6 +67,7 @@ class SearchViewController: UIViewController {
     
     func iTunesURL(searchText: String) -> URL {
         let encodedText = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        
         let urlString = String(
             format:"https://itunes.apple.com/search?term=%@&limit=200",
             encodedText
@@ -76,16 +77,7 @@ class SearchViewController: UIViewController {
         return url!
     }
     
-    func performStoreRequest(with url: URL) -> Data?{
-        do{
-            return try Data(contentsOf: url)
-        }
-        catch{
-            print("Request error - \(error)")
-        }
-        showNetworkError()
-        return nil
-    }
+    
     
     func parse(data: Data) -> [SearchResult]{
         do {
@@ -114,10 +106,6 @@ class SearchViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    func sortSearchResults(){
-        searchResults.sort(by: <)
-    }
-    
     
 }
 
@@ -135,21 +123,46 @@ extension SearchViewController: UISearchBarDelegate{
             searchBar.resignFirstResponder()
             searchResults = []
  
-            let queue = DispatchQueue.global()
+//            let queue = DispatchQueue.global()
             let url = iTunesURL(searchText: searchBar.text!)
-        
-            queue.async {
-                if let data = self.performStoreRequest(with: url){
-                    searchResults = self.parse(data: data)
-                    self.sortSearchResults()
+            let session = URLSession.shared
+
+
+            let dataTask = session.dataTask(with: url) {data, response, error in
+                if let error = error{
+                    print("Failed - \(error.localizedDescription)")
+                }
+                else if let httpResponse = response as? HTTPURLResponse,
+                            httpResponse.statusCode == 200 {
+                    print("Success - \(data!)")
+                    searchResults = self.parse(data: data!)
+                    searchResults.sort(by: <)
                     
                     DispatchQueue.main.async {
+                        self.hasSearched = false
                         self.isLoading = false
                         self.tableView.reloadData()
+                        self.showNetworkError()
                     }
-                    return
+                }
+                else if let httpResponse = response as? HTTPURLResponse,
+                            httpResponse.statusCode == 404 {
+                    print("Page Not Found")
                 }
             }
+            dataTask.resume()
+//            queue.async {
+//                if let data = self.performStoreRequest(with: url){
+//                    searchResults = self.parse(data: data)
+//                    searchResults.sort(by: <)
+//
+//                    DispatchQueue.main.async {
+//                        self.isLoading = false
+//                        self.tableView.reloadData()
+//                    }
+//                    return
+//                }
+//            }
         }
         tableView.reloadData()
         
