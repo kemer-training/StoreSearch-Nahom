@@ -117,13 +117,12 @@ extension SearchViewController: UISearchBarDelegate{
         isLoading = true
         
         
-        
         if !searchBar.text!.isEmpty{
             
             searchBar.resignFirstResponder()
             searchResults = []
  
-//            let queue = DispatchQueue.global()
+
             let url = iTunesURL(searchText: searchBar.text!)
             let session = URLSession.shared
 
@@ -134,35 +133,32 @@ extension SearchViewController: UISearchBarDelegate{
                 }
                 else if let httpResponse = response as? HTTPURLResponse,
                             httpResponse.statusCode == 200 {
-                    print("Success - \(data!)")
-                    searchResults = self.parse(data: data!)
-                    searchResults.sort(by: <)
                     
-                    DispatchQueue.main.async {
-                        self.hasSearched = false
-                        self.isLoading = false
-                        self.tableView.reloadData()
-                        self.showNetworkError()
+                    if let data = data {
+                        searchResults = self.parse(data: data)
+                        searchResults.sort(by: <)
+
+                        DispatchQueue.main.async {
+                            self.isLoading = false
+                            self.tableView.reloadData()
+                        }
+                        return
                     }
                 }
                 else if let httpResponse = response as? HTTPURLResponse,
                             httpResponse.statusCode == 404 {
                     print("Page Not Found")
                 }
+                
+                DispatchQueue.main.async {
+                  self.hasSearched = false
+                  self.isLoading = false
+                  self.tableView.reloadData()
+                  self.showNetworkError()
+                }
+
             }
             dataTask.resume()
-//            queue.async {
-//                if let data = self.performStoreRequest(with: url){
-//                    searchResults = self.parse(data: data)
-//                    searchResults.sort(by: <)
-//
-//                    DispatchQueue.main.async {
-//                        self.isLoading = false
-//                        self.tableView.reloadData()
-//                    }
-//                    return
-//                }
-//            }
         }
         tableView.reloadData()
         
