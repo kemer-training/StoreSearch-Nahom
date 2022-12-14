@@ -97,7 +97,7 @@ func > (lhs: SearchResult, rhs: SearchResult) -> Bool{
 }
 
 
-var searchResults: [SearchResult] = []
+
 
 
 

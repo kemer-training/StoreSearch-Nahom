@@ -17,7 +17,11 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var genreLabel: UILabel!
     @IBOutlet weak var priceButton: UIButton!
     
+    var searchResult: SearchResult!
+    
     var artWork: UIImageView?
+    
+    var downloadTask: URLSessionDownloadTask?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,13 +36,54 @@ class DetailViewController: UIViewController {
         gestureRecognizer.cancelsTouchesInView = true
         gestureRecognizer.delegate = self
         view.addGestureRecognizer(gestureRecognizer)
+        
+        if searchResult != nil{
+            showDataInPopup()
+        }
+    }
+    deinit {
+        downloadTask?.cancel()
     }
     
     @IBAction func close() {
+//        downloadTask?.cancel()
         dismiss(animated: true)
     }
     
+    @IBAction func openInStore(){
+        if let url = URL(string: searchResult.storeURL){
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+    
+    func showDataInPopup(){
+        guard let result = searchResult,
+              let largeUrl = URL(string: result.imageLarge)
+        else { return }
 
+        
+        downloadTask = artworkImageView.loadImage(url: largeUrl)
+        
+        nameLabel.text = !result.name.isEmpty ? result.name : "Unknown"
+        artistNameLabel.text = !result.artist.isEmpty ? result.artistName : "Unknown"
+        
+        kindLabel.text = result.type
+        genreLabel.text = result.genre
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = searchResult.currency
+        
+        var priceText = ""
+        if result.price == 0{
+            priceText = "Free"
+        }
+        else if let text = formatter.string(from: result.price as NSNumber){
+            priceText = text
+        }
+        
+        priceButton.setTitle(priceText, for: .normal)
+    }
 }
 
 extension DetailViewController: UIGestureRecognizerDelegate{

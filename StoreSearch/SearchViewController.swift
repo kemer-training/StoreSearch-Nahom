@@ -19,9 +19,9 @@ class SearchViewController: UIViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
-    
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
+    var searchResults: [SearchResult] = []
     
     var hasSearched = false
     var isLoading = false
@@ -163,8 +163,8 @@ extension SearchViewController: UISearchBarDelegate{
                             httpResponse.statusCode == 200 {
                     
                     if let data = data {
-                        searchResults = self.parse(data: data)
-                        searchResults.sort(by: <)
+                        self.searchResults = self.parse(data: data)
+//                        self.searchResults.sort(by: <)
 
                         DispatchQueue.main.async {
                             self.isLoading = false
@@ -251,6 +251,12 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
         return indexPath
     }
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowDetail"{
+            let detailVC = segue.destination as! DetailViewController
+            let indexPath = sender as! IndexPath
+            detailVC.searchResult = searchResults[indexPath.row]
+        }
+    }
     
 }

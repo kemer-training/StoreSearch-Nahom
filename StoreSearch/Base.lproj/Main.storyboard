@@ -83,7 +83,7 @@
                         <outlet property="searchBar" destination="vhi-FV-6fS" id="Frc-g3-alz"/>
                         <outlet property="segmentedControl" destination="HGR-Ef-A9Q" id="WpO-ga-4PT"/>
                         <outlet property="tableView" destination="pzS-iX-MoO" id="WWb-Tb-89Z"/>
-                        <segue destination="WAf-UR-EAb" kind="presentation" identifier="ShowDetail" modalPresentationStyle="pageSheet" id="TYF-MM-w0f"/>
+                        <segue destination="WAf-UR-EAb" kind="presentation" identifier="ShowDetail" modalPresentationStyle="overFullScreen" id="TYF-MM-w0f"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -95,11 +95,11 @@
             <objects>
                 <viewController storyboardIdentifier="ShowDetail" id="WAf-UR-EAb" userLabel="Detail" customClass="DetailViewController" customModule="StoreSearch" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dih-Ot-qdg">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="548"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fp4-iy-Xdh" userLabel="Pop-up View">
-                                <rect key="frame" x="20" y="134" width="280" height="280"/>
+                                <rect key="frame" x="20" y="144" width="280" height="280"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="oOX-1C-zls">
                                         <rect key="frame" x="16" y="16" width="248" height="248"/>
@@ -179,6 +179,9 @@
                                                                 <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                                 <state key="normal" title="$9.99" backgroundImage="PriceButton"/>
+                                                                <connections>
+                                                                    <action selector="openInStore" destination="WAf-UR-EAb" eventType="touchUpInside" id="fZ0-M3-HYt"/>
+                                                                </connections>
                                                             </button>
                                                         </subviews>
                                                     </stackView>

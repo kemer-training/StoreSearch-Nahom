@@ -31,7 +31,6 @@ class SearchResultCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        print("About to reuse")
         downloadTask?.cancel()
         downloadTask = nil
     }
