@@ -40,6 +40,7 @@ class SearchViewController: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 91, left: 0, bottom: 0, right: 0)
         
         registerCustomCells()
+        
     }
     
     @IBAction func segmentedChanged(_ sender: UISegmentedControl) {
@@ -94,8 +95,6 @@ class SearchViewController: UIViewController {
         return url!
     }
     
-    
-    
     func parse(data: Data) -> [SearchResult]{
         do {
             let decoder = JSONDecoder()
@@ -123,7 +122,6 @@ class SearchViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    
 }
 
 
@@ -133,9 +131,18 @@ extension SearchViewController: UISearchBarDelegate{
     }
     
     func performSearch() {
+//        if !searchBar.text!.isEmpty{
+            
+            hasSearched = true
+            isLoading = true
+//        }
+//        else{
+//            hasSearched = false
+//            searchResults = []
+//            tableView.reloadData()
+//        }
         
-        hasSearched = true
-        isLoading = true
+        
         dataTask?.cancel()
         
         if !searchBar.text!.isEmpty{
@@ -231,7 +238,10 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        performSegue(withIdentifier: "ShowDetail", sender: indexPath)
     }
+    
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if searchResults.isEmpty || isLoading {
