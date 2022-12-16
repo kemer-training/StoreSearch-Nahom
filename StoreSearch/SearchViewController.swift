@@ -21,6 +21,7 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
+    var landscapeVC: LandscapeViewController?
     var searchResults: [SearchResult] = []
     
     var hasSearched = false
@@ -43,8 +44,61 @@ class SearchViewController: UIViewController {
         
     }
     
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+        
+        switch newCollection.verticalSizeClass{
+            case .compact:
+                showLandscape(with: coordinator)
+            case .regular, .unspecified:
+                hideLandscape(with: coordinator)
+            @unknown default:
+                break
+        }
+    }
+    
     @IBAction func segmentedChanged(_ sender: UISegmentedControl) {
         performSearch()
+    }
+    
+    func showLandscape(with coordinator: UIViewControllerTransitionCoordinator){
+        
+        guard landscapeVC == nil else { return }
+        
+        landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
+        
+        if let controller = landscapeVC{
+            controller.view.frame = view.bounds
+            controller.view.alpha = 0
+            view.addSubview(controller.view)
+            addChild(controller)
+            
+            
+            coordinator.animate(alongsideTransition: { _ in
+                controller.view.alpha = 1
+                self.searchBar.resignFirstResponder()
+                if self.presentedViewController != nil{
+                    self.dismiss(animated: true)
+                }
+            }, completion: { _ in
+                controller.didMove(toParent: self)
+            })
+        }
+//        present(vc, animated: true)
+    }
+    func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator){
+        guard let controller = landscapeVC else { return }
+        
+        controller.willMove(toParent: nil)
+        coordinator.animate(alongsideTransition: { _ in
+            controller.view.alpha = 0
+            self.searchBar.becomeFirstResponder()
+        }, completion: { _ in
+            controller.view.removeFromSuperview()
+            controller.removeFromParent()
+            self.landscapeVC = nil
+        })
+
     }
     
     func registerCustomCells(){
