@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_0" orientation="landscape" appearance="light"/>
+    <device id="retina4_0" orientation="landscape" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Image references" minToolsVersion="12.0"/>
@@ -40,7 +40,7 @@
                                 <rect key="frame" x="0.0" y="51" width="568" height="32"/>
                                 <items>
                                     <barButtonItem style="plain" id="PU0-5J-QXr">
-                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="HGR-Ef-A9Q">
+                                        <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="HGR-Ef-A9Q">
                                             <rect key="frame" x="20" y="0.0" width="528" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
@@ -249,24 +249,36 @@
                         <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You just flipped your phone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4PC-Zk-d52">
-                                <rect key="frame" x="156.5" y="148" width="255.5" height="24"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <color key="textColor" systemColor="systemGreenColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vhz-77-LNb">
+                                <rect key="frame" x="0.0" y="0.0" width="568" height="320"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Msy-q4-uja"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="CUU-49-mwG"/>
+                                <connections>
+                                    <outlet property="delegate" destination="4Fn-hi-aoR" id="7Ke-fq-7qJ"/>
+                                </connections>
+                            </scrollView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="IpH-2S-Rnw">
+                                <rect key="frame" x="225.5" y="284" width="117" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" name="SearchBar"/>
+                                <color key="currentPageIndicatorTintColor" name="ArtistName"/>
+                                <connections>
+                                    <action selector="pageChanged:" destination="4Fn-hi-aoR" eventType="valueChanged" id="fu9-qM-Ko4"/>
+                                </connections>
+                            </pageControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="KbG-cI-fnX"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="4PC-Zk-d52" firstAttribute="centerY" secondItem="fHy-vG-wEZ" secondAttribute="centerY" id="ECx-zj-MaV"/>
-                            <constraint firstItem="4PC-Zk-d52" firstAttribute="centerX" secondItem="fHy-vG-wEZ" secondAttribute="centerX" id="njo-T5-NGM"/>
-                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="pageControl" destination="IpH-2S-Rnw" id="vZy-fR-F3Z"/>
+                        <outlet property="scrollView" destination="Vhz-77-LNb" id="XX2-vg-pBu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fZZ-db-Exy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1485" y="-2"/>
+            <point key="canvasLocation" x="1484.1549295774648" y="-3.75"/>
         </scene>
     </scenes>
     <color key="tintColor" name="AccentColor"/>
@@ -287,9 +299,6 @@
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

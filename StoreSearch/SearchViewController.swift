@@ -21,13 +21,13 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
-    var landscapeVC: LandscapeViewController?
+    private var landscapeVC: LandscapeViewController?
     var searchResults: [SearchResult] = []
     
-    var hasSearched = false
-    var isLoading = false
+    private var hasSearched = false
+    private var isLoading = false
     
-    var dataTask: URLSessionDataTask?
+    private var dataTask: URLSessionDataTask?
 
     
     override func viewDidLoad() {
@@ -68,6 +68,7 @@ class SearchViewController: UIViewController {
         landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
         
         if let controller = landscapeVC{
+            controller.searchResults = searchResults
             controller.view.frame = view.bounds
             controller.view.alpha = 0
             view.addSubview(controller.view)

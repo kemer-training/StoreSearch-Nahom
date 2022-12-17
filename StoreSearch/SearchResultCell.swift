@@ -13,7 +13,7 @@ class SearchResultCell: UITableViewCell {
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var artworkImageView: UIImageView!
     
-    var downloadTask: URLSessionDownloadTask?
+    private var downloadTask: URLSessionDownloadTask?
     
     override func awakeFromNib() {
         super.awakeFromNib()

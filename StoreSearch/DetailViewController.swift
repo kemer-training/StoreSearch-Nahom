@@ -26,11 +26,11 @@ class DetailViewController: UIViewController {
     
     var searchResult: SearchResult!
     
-    var artWork: UIImageView?
+//    var artWork: UIImageView?
     
-    var downloadTask: URLSessionDownloadTask?
+    private var downloadTask: URLSessionDownloadTask?
     
-    var dismissStyle = AnimationStyle.fade
+    private var dismissStyle = AnimationStyle.fade
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
