@@ -14,6 +14,8 @@ class LandscapeViewController: UIViewController {
     
     var searchResults: [SearchResult] = []
     private var firstTime = true
+    private var downloads = [URLSessionDownloadTask]()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,11 +95,12 @@ class LandscapeViewController: UIViewController {
         var x = marginX
         
         for (index, result) in searchResults.enumerated(){
-            let button = UIButton(type: .system)
+            let button = UIButton(type: .custom)
+            downloadImage(for: result, andPlaceOn: button)
+            button.setBackgroundImage(UIImage(named: "LandscapeButton"), for: .normal)
             
-            button.backgroundColor = UIColor.white
-            button.setTitle("\(index)", for: .normal)
-            
+//            button.backgroundColor = UIColor.white
+//            button.setTitle("\(index)", for: .normal)
             button.frame = CGRect(
                 x: x + paddingHorz,
                 y: marginY + CGFloat(row)*itemWidth + paddingVert,
@@ -126,6 +129,31 @@ class LandscapeViewController: UIViewController {
         pageControl.numberOfPages = numPages
         pageControl.currentPage = 0
         
+    }
+    
+    private func downloadImage(for searchResult: SearchResult, andPlaceOn button: UIButton){
+        if let url = URL(string: searchResult.imageSmall){
+            let task = URLSession.shared.downloadTask(
+                with: url) { [weak button] url, _, error in
+                    if error == nil,
+                       let url = url,
+                       let data = try? Data(contentsOf: url),
+                       let image = UIImage(data: data){
+                        DispatchQueue.main.async {
+                            if let button = button{
+                                button.setImage(image, for: .normal)
+                            }
+                        }
+                    }
+                }
+            task.resume()
+            downloads.append(task)
+        }
+    }
+    deinit {
+        for task in downloads{
+            task.cancel()
+        }
     }
 
 }
