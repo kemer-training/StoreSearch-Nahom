@@ -79,13 +79,15 @@ class SearchViewController: UIViewController {
                 controller.didMove(toParent: self)
             })
         }
-//        present(vc, animated: true)
     }
     func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator){
         guard let controller = landscapeVC else { return }
         
         controller.willMove(toParent: nil)
         coordinator.animate(alongsideTransition: { _ in
+            if self.presentedViewController != nil {
+              self.dismiss(animated: true, completion: nil)
+            }
             controller.view.alpha = 0
             self.searchBar.becomeFirstResponder()
         }, completion: { _ in
@@ -157,6 +159,7 @@ extension SearchViewController: UISearchBarDelegate{
                     self.showNetworkError()
                 }
                 self.tableView.reloadData()
+                self.landscapeVC?.searchResultsReceived()
             }
         }
         
@@ -181,31 +184,6 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-//        var cell: SearchResultCell
-        
-//        if search.isLoading {
-//            let cell = tableView.dequeueReusableCell(
-//                withIdentifier: TableView.CellIdentifiers.loadingCell,
-//                for: indexPath)
-//
-//            let spinner = cell.viewWithTag(100) as! UIActivityIndicatorView
-//            spinner.startAnimating()
-//            return cell
-//        }
-//
-//        if search.searchResults.count == 0{
-//            return tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.nothingFoundCell, for: indexPath)
-//
-//        }
-//        else{
-//            let searchResult = search.searchResults[indexPath.row]
-//            cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.searchResultCell, for: indexPath) as! SearchResultCell
-//
-//
-//            cell.nameLabel.text = searchResult.name
-//            cell.configure(for: searchResult)
-//        }
         
         switch search.state{
             case .notSearchedYet:

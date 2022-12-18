@@ -75,7 +75,7 @@ class Search {
                     }
                     success = true
                 }
-                print("Failure! \(response!)")
+                print("Failure! \(response)")
                 
                 DispatchQueue.main.async {
                     self.state = newState
