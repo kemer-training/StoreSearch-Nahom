@@ -22,12 +22,17 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     
     private var landscapeVC: LandscapeViewController?
+    weak var splitViewDetail: DetailViewController?
+
     private let search = Search()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = NSLocalizedString("Search", comment: "Title of split view controller")
         
-        searchBar.becomeFirstResponder()
+        if UIDevice.current.userInterfaceIdiom == .pad{
+            searchBar.becomeFirstResponder()
+        }
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -53,49 +58,6 @@ class SearchViewController: UIViewController {
     
     @IBAction func segmentedChanged(_ sender: UISegmentedControl) {
         performSearch()
-    }
-    
-    func showLandscape(with coordinator: UIViewControllerTransitionCoordinator){
-        
-        guard landscapeVC == nil else { return }
-        
-        landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
-        
-        if let controller = landscapeVC{
-            controller.search = search
-            controller.view.frame = view.bounds
-            controller.view.alpha = 0
-            view.addSubview(controller.view)
-            addChild(controller)
-            
-            
-            coordinator.animate(alongsideTransition: { _ in
-                controller.view.alpha = 1
-                self.searchBar.resignFirstResponder()
-                if self.presentedViewController != nil{
-                    self.dismiss(animated: true)
-                }
-            }, completion: { _ in
-                controller.didMove(toParent: self)
-            })
-        }
-    }
-    func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator){
-        guard let controller = landscapeVC else { return }
-        
-        controller.willMove(toParent: nil)
-        coordinator.animate(alongsideTransition: { _ in
-            if self.presentedViewController != nil {
-              self.dismiss(animated: true, completion: nil)
-            }
-            controller.view.alpha = 0
-            self.searchBar.becomeFirstResponder()
-        }, completion: { _ in
-            controller.view.removeFromSuperview()
-            controller.removeFromParent()
-            self.landscapeVC = nil
-        })
-
     }
     
     func registerCustomCells(){
@@ -124,6 +86,62 @@ class SearchViewController: UIViewController {
         tableView.register(
             loadingNib,
             forCellReuseIdentifier: TableView.CellIdentifiers.loadingCell
+        )
+    }
+    
+    func showLandscape(with coordinator: UIViewControllerTransitionCoordinator){
+        
+        guard landscapeVC == nil else { return }
+        
+        landscapeVC = storyboard!.instantiateViewController(withIdentifier: "LandscapeViewController") as? LandscapeViewController
+        
+        if let controller = landscapeVC{
+            controller.search = search
+            controller.view.frame = view.bounds
+            controller.view.alpha = 0
+            view.addSubview(controller.view)
+            addChild(controller)
+            
+            
+            coordinator.animate(alongsideTransition: { _ in
+                controller.view.alpha = 1
+                self.searchBar.resignFirstResponder()
+                if self.presentedViewController != nil{
+                    self.dismiss(animated: true)
+                }
+            }, completion: { _ in
+                controller.didMove(toParent: self)
+            })
+        }
+    }
+    
+    func hideLandscape(with coordinator: UIViewControllerTransitionCoordinator){
+        guard let controller = landscapeVC else { return }
+        
+        controller.willMove(toParent: nil)
+        coordinator.animate(alongsideTransition: { _ in
+            if self.presentedViewController != nil {
+              self.dismiss(animated: true, completion: nil)
+            }
+            controller.view.alpha = 0
+            self.searchBar.becomeFirstResponder()
+        }, completion: { _ in
+            controller.view.removeFromSuperview()
+            controller.removeFromParent()
+            self.landscapeVC = nil
+        })
+
+    }
+    
+    private func hidePrimaryPane(){
+        UIView.animate(
+            withDuration: 0.25,
+            animations: {
+                self.splitViewController?.preferredDisplayMode = .secondaryOnly
+            },
+            completion: {_ in
+                self.splitViewController?.preferredDisplayMode = .automatic
+            }
         )
     }
     
@@ -210,9 +228,20 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        searchBar.resignFirstResponder()
         
-        performSegue(withIdentifier: "ShowDetail", sender: indexPath)
+        if view.window?.rootViewController?.traitCollection.horizontalSizeClass == .compact{
+            performSegue(withIdentifier: "ShowDetail", sender: indexPath)
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+        else{
+            if case .results(let list) = search.state {
+                splitViewDetail?.searchResult = list[indexPath.row]
+            }
+            if splitViewController?.preferredDisplayMode != .oneBesideSecondary{
+                hidePrimaryPane()
+            }
+        }
     }
     
     

@@ -110,9 +110,9 @@
 				F5DEE01B293B7D1C00EFD015 /* Main.storyboard */,
 				F5DEE020293B7D1E00EFD015 /* LaunchScreen.storyboard */,
 				F53AC7162954C37200E6DFE9 /* Localizable.strings */,
+				F5BBFDC1295580AD00EE5ECB /* InfoPlist.strings */,
 				F5DEE01E293B7D1E00EFD015 /* Assets.xcassets */,
 				F5DEE023293B7D1E00EFD015 /* Info.plist */,
-				F5BBFDC1295580AD00EE5ECB /* InfoPlist.strings */,
 			);
 			path = StoreSearch;
 			sourceTree = "<group>";

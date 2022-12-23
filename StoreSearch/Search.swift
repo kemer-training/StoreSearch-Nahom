@@ -36,9 +36,6 @@ class Search {
         case results([SearchResult])
     }
     
-//    var searchResults: [SearchResult] = []
-//    var hasSearched = false
-//    var isLoading = false
     private(set) var state: State = .notSearchedYet
     private var dataTask: URLSessionDataTask?
     
@@ -47,9 +44,6 @@ class Search {
         if !text.isEmpty{
             dataTask?.cancel()
             state = .loading
-//            hasSearched = true
-//            isLoading = true
-//            searchResults = []
             
             let url = iTunesURL(searchText: text, category: category)
             let session = URLSession.shared
@@ -66,7 +60,7 @@ class Search {
                 else if let httpResponse = response as? HTTPURLResponse,
                         httpResponse.statusCode == 200, let data = data {
             
-                    var searchResults = self.parse(data: data)
+                    let searchResults = self.parse(data: data)
                     if searchResults.isEmpty {
                         newState = .noResults
                     } else {
@@ -92,7 +86,7 @@ class Search {
         let encodedText = searchText.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
         
         let locale = Locale.autoupdatingCurrent
-        var language = locale.identifier
+        let language = locale.identifier
         let countryCode = locale.regionCode ?? "en_US"
         
         let urlString = "https://itunes.apple.com/search?" + "term=\(encodedText)&limit=200&entity=\(kind)&lang=\(language)&country=\(countryCode)"

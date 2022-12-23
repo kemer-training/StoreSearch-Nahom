@@ -24,9 +24,18 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var genreLabel: UILabel!
     @IBOutlet weak var priceButton: UIButton!
     
-    var searchResult: SearchResult!
     
-//    var artWork: UIImageView?
+    
+    var searchResult: SearchResult!{
+        didSet{
+            if isViewLoaded{
+                updateUI()
+            }
+        }
+    }
+    
+    
+    var isPopUp = false
     
     private var downloadTask: URLSessionDownloadTask?
     
@@ -39,32 +48,37 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-        let dimmingView = GradientView(frame: CGRect.zero)
-        dimmingView.frame = view.bounds
-        view.insertSubview(dimmingView, at: 0)
-        
-        popupView.layer.cornerRadius = 10
-        
-        let gestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(close)
-        )
-        
-        gestureRecognizer.cancelsTouchesInView = true
-        gestureRecognizer.delegate = self
-        view.addGestureRecognizer(gestureRecognizer)
-        
-        if searchResult != nil{
-            showDataInPopup()
+        if isPopUp{
+            popupView.layer.cornerRadius = 10
+            let gestureRecognizer = UITapGestureRecognizer(
+                target: self,
+                action: #selector(close)
+            )
+            
+            gestureRecognizer.cancelsTouchesInView = true
+            gestureRecognizer.delegate = self
+            view.addGestureRecognizer(gestureRecognizer)
+            
+            view.backgroundColor = .clear
+            let dimmingView = GradientView(frame: CGRect.zero)
+            dimmingView.frame = view.bounds
+            view.insertSubview(dimmingView, at: 0)
         }
+        else{
+            view.backgroundColor = UIColor(patternImage: UIImage(named: "LandscapeBackground")!)
+            popupView.isHidden = true
+        }
+        if searchResult != nil{
+            updateUI()
+        }
+        
+        
     }
     deinit {
         downloadTask?.cancel()
     }
     
     @IBAction func close() {
-//        downloadTask?.cancel()
         dismissStyle = .slide
         dismiss(animated: true)
     }
@@ -75,7 +89,7 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func showDataInPopup(){
+    func updateUI(){
         guard let result = searchResult,
               let largeUrl = URL(string: result.imageLarge)
         else { return }
@@ -102,6 +116,7 @@ class DetailViewController: UIViewController {
         }
         
         priceButton.setTitle(priceText, for: .normal)
+        popupView.isHidden = false
     }
 }
 
