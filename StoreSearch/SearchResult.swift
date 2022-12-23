@@ -4,7 +4,7 @@
 //
 //  Created by NAHØM on 03/12/2022.
 //
-
+import Foundation
 
 class ResultArray: Codable{
     var resultCount = 0
@@ -29,24 +29,26 @@ class SearchResult: Codable, CustomStringConvertible{
     var artist: String{
         return artistName ?? ""
     }
-    var type: String{
-        let kind = kind ?? "audiobook"
-        
-        switch kind{
-            case "album": return "Album"
-            case "audiobook": return "Audio Book"
-            case "book": return "Book"
-            case "ebook": return "E-Book"
-            case "feature-movie": return "Movie"
-            case "music-video": return "Music Video"
-            case "podcast": return "Podcast"
-            case "software": return "App"
-            case "song": return "Song"
-            case "tv-episode": return "TV Episode"
-            default: return "Unknown"
-        }
-//        return "Unknown"
+    
+    private let typeForKind = [
+        "album": NSLocalizedString("Album", comment: "Localized kind: Album"),
+        "audiobook": NSLocalizedString("Audio Book", comment: "Localized kind: Audio Book"),
+        "book": NSLocalizedString("Book", comment: "Localized kind: Book"),
+        "ebook": NSLocalizedString("E-Book", comment: "Localized kind: E-Book"),
+        "feature-movie": NSLocalizedString("Movie", comment: "Localized kind: Feature Movie"),
+        "music-video": NSLocalizedString("Music Video", comment: "Localized kind: Music Video"),
+        "podcast": NSLocalizedString("Podcast", comment: "Localized kind: Podcast"),
+        "software": NSLocalizedString("App", comment: "Localized kind: Software"),
+        "song": NSLocalizedString("Song", comment: "Localized kind: Song"),
+        "tv-episode": NSLocalizedString("TV Episode", comment: "Localized kind: TV Episode")
+    ]
+
+    
+    var type: String {
+        let kind = self.kind ?? "audiobook"
+        return typeForKind[kind] ?? kind
     }
+
     
     var trackPrice: Double? = 0.0
     var currency = ""

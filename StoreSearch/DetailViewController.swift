@@ -83,8 +83,8 @@ class DetailViewController: UIViewController {
         
         downloadTask = artworkImageView.loadImage(url: largeUrl)
         
-        nameLabel.text = !result.name.isEmpty ? result.name : "Unknown"
-        artistNameLabel.text = !result.artist.isEmpty ? result.artistName : "Unknown"
+        nameLabel.text = !result.name.isEmpty ? result.name : NSLocalizedString("Unknown", comment: "Localized Label: Unknown")
+        artistNameLabel.text = !result.artist.isEmpty ? result.artistName : NSLocalizedString("Unknown", comment: "Localized Label: Unknown")
         
         kindLabel.text = result.type
         genreLabel.text = result.genre
@@ -95,7 +95,7 @@ class DetailViewController: UIViewController {
         
         var priceText = ""
         if result.price == 0{
-            priceText = "Free"
+            priceText = NSLocalizedString("Free", comment: "Localized Text: priceText")
         }
         else if let text = formatter.string(from: result.price as NSNumber){
             priceText = text
