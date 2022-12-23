@@ -116,7 +116,12 @@ class DetailViewController: UIViewController {
         }
         
         priceButton.setTitle(priceText, for: .normal)
+        
         popupView.isHidden = false
+        popupView.alpha = 0
+        UIView.animate(withDuration: 0.6, animations: {
+            self.popupView.alpha = 1
+        })
     }
 }
 

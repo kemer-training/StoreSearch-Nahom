@@ -30,7 +30,7 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         title = NSLocalizedString("Search", comment: "Title of split view controller")
         
-        if UIDevice.current.userInterfaceIdiom == .pad{
+        if UIDevice.current.userInterfaceIdiom == .phone{
             searchBar.becomeFirstResponder()
         }
         
@@ -41,6 +41,14 @@ class SearchViewController: UIViewController {
         
         registerCustomCells()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if UIDevice.current.userInterfaceIdiom == .phone{
+            navigationController?.navigationBar.isHidden = true
+        }
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -258,6 +266,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
                 let detailVC = segue.destination as! DetailViewController
                 let indexPath = sender as! IndexPath
                 detailVC.searchResult = list[indexPath.row]
+                detailVC.isPopUp = true
             }
         }
     }
