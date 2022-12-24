@@ -40,7 +40,6 @@ class Search {
     private var dataTask: URLSessionDataTask?
     
     func performSearch(for text: String, category: Category, completion: @escaping SearchComplete) {
-        print("Searching...")
         if !text.isEmpty{
             dataTask?.cancel()
             state = .loading
@@ -64,12 +63,12 @@ class Search {
                     if searchResults.isEmpty {
                         newState = .noResults
                     } else {
-//                        searchResults.sort(by: <)
+                        searchResults.sort(by: <)
                         newState = .results(searchResults)
                     }
                     success = true
                 }
-                print("Failure! \(response)")
+//                print("Failure! \(response)")
                 
                 DispatchQueue.main.async {
                     self.state = newState

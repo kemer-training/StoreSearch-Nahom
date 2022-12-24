@@ -48,7 +48,7 @@ class LandscapeViewController: UIViewController {
             firstTime = false
             switch search.state{
                 case .notSearchedYet: break
-                case .noResults: showNothingFoundLabel(); print("In layout")
+                case .noResults: showNothingFoundLabel()
                 case .loading: showSpinner()
                 case .results(let list): tileButtons(list)
             }
@@ -141,9 +141,11 @@ class LandscapeViewController: UIViewController {
         let numPages = 1 + (searchResults.count - 1) / buttonsPerPage
         scrollView.contentSize = CGSize(
             width: CGFloat(numPages) * viewWidth,
-            height: scrollView.bounds.size.height)
-        
-        print("Number of pages: \(numPages)")
+            height: UIScreen.main.bounds.size.height)
+//        scrollView.contentSize = CGSize(
+//            width: CGFloat(numPages) * viewWidth,
+//            height: scrollView.bounds.size.height)
+//
         pageControl.numberOfPages = numPages
         pageControl.currentPage = 0
         
@@ -174,7 +176,7 @@ class LandscapeViewController: UIViewController {
         
         switch search.state{
             case .notSearchedYet, .loading: break
-            case .noResults: showNothingFoundLabel(); print("In received")
+            case .noResults: showNothingFoundLabel()
             case .results(let list): tileButtons(list)
         }
     }

@@ -56,8 +56,11 @@ class SearchViewController: UIViewController {
         
         switch newCollection.verticalSizeClass{
             case .compact:
-                showLandscape(with: coordinator)
+                if newCollection.horizontalSizeClass == .compact{
+                    showLandscape(with: coordinator)
+                }
             case .regular, .unspecified:
+                
                 hideLandscape(with: coordinator)
             @unknown default:
                 break
@@ -141,17 +144,18 @@ class SearchViewController: UIViewController {
 
     }
     
-    private func hidePrimaryPane(){
+
+    private func hidePrimaryPane() {
         UIView.animate(
             withDuration: 0.25,
             animations: {
-                self.splitViewController?.preferredDisplayMode = .secondaryOnly
-            },
-            completion: {_ in
-                self.splitViewController?.preferredDisplayMode = .automatic
+                self.splitViewController!.preferredDisplayMode = .secondaryOnly
+            }, completion: { _ in
+                self.splitViewController!.preferredDisplayMode = .automatic
             }
         )
     }
+
     
     
     
@@ -246,7 +250,8 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
             if case .results(let list) = search.state {
                 splitViewDetail?.searchResult = list[indexPath.row]
             }
-            if splitViewController?.preferredDisplayMode != .oneBesideSecondary{
+            
+            if splitViewController!.displayMode != .oneBesideSecondary{
                 hidePrimaryPane()
             }
         }
